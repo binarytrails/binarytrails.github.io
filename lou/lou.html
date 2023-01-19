@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Morse Code Generator</title>
+  <style>
+    body {
+        font-size: 20px;
+        color: white;
+        background: black;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 30px;
+    }
+    input[type="text"] {
+      width: 80%;
+      padding: 12px 20px;
+      margin: 8px 0;
+      box-sizing: border-box;
+      border: 2px solid #ccc;
+      border-radius: 4px;
+    }
+    button[type="submit"] {
+      width: 50%;
+      background-color: white;
+      color: black;
+      padding: 14px 20px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button[type="submit"]:hover {
+      background-color: grey;
+    }
+  .container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .circle {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background-color: white;
+    box-shadow: 0 0 10px 5px rgba(255, 255, 255, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  @media (max-width: 768px) {
+    .circle {
+      width: 150px;
+      height: 150px;
+    }
+  }
+  </style>
+</head>
+<body>
+  <form id="morse-form">
+    <label for="text-input">Enter text to convert to Morse code:</label><br>
+    <input type="text" id="text-input" name="text"><br>
+    <button type="submit" id="convert-button">Convert to Morse code</button>
+  </form>
+  <div class="container">
+    <div class="circle"></div>
+  </div>
+  <script>
+    const MORSE_CODE = {
+      'A': '.-',
+      'B': '-...',
+      'C': '-.-.',
+      'D': '-..',
+      'E': '.',
+      'F': '..-.',
+      'G': '--.',
+      'H': '....',
+      'I': '..',
+      'J': '.---',
+      'K': '-.-',
+      'L': '.-..',
+      'M': '--',
+      'N': '-.',
+      'O': '---',
+      'P': '.--.',
+      'Q': '--.-',
+      'R': '.-.',
+      'S': '...',
+      'T': '-',
+      'U': '..-',
+      'V': '...-',
+      'W': '.--',
+      'X': '-..-',
+      'Y': '-.--',
+      'Z': '--..',
+      '1': '.----',
+      '2': '..---',
+      '3': '...--',
+      '4': '....-',
+      '5': '.....',
+      '6': '-....',
+      '7': '--...',
+      '8': '---..',
+      '9': '----.',
+      '0': '-----',
+      ' ': '/'
+    };
+    const morseForm = document.getElementById('morse-form');
+    const textInput = document.getElementById('text-input');
+    const light = document.getElementById('light-object');
+    const circle = document.querySelector('.circle');
+    const flickerSpeedMs = 1000;
+    var audio = new Audio("beep.mp3");
+
+    morseForm.addEventListener('submit', (event) => {
+      //alert("test");
+      event.preventDefault();
+
+
+      if (navigator.vibrate) {
+        console.log("Performing Vibration test...");
+        // Vibrate the device
+        //navigator.vibrate(200); // vibrate for 200ms
+        //navigator.vibrate([100,30,100,30,100,30,200,30,200,30,200,30,100,30,100,30,100]); // Vibrate 'SOS' in Morse.
+      } else {
+        // Vibration is not supported
+        console.log("Vibration is not supported on this device.");
+      }
+
+
+      const text = textInput.value;
+      const morseCode = convertToMorseCode(text);
+      console.log(morseCode);
+      playMorseCode(morseCode);
+    });
+
+    function convertToMorseCode(text) {
+
+       // Initialize the display element and the result string
+       const display = document.getElementById('display');
+       let result = '';
+
+       // Loop through the characters in the text and convert them to Morse code
+       for (let i = 0; i < text.length; i++) {
+         const char = text[i].toUpperCase();
+         result += MORSE_CODE[char] + ' ';
+       }
+
+       // Set the result as the inner HTML of the display element
+       //morseForm.innerHTML = result;
+
+       // Play the Morse code using haptic feedback and flickering light
+       return result;
+     }
+
+    async function playMorseCode(morseCode) {
+      morseForm.innerHTML = "";
+
+      // Split the morse code string into an array of individual characters
+      const morseCodeCharacters = morseCode.split('');
+
+      // Loop through each character in the morse code
+      for (const character of morseCodeCharacters) {
+        morseForm.innerHTML = morseForm.innerHTML + character;
+        // Check if the character is a dot or a dash
+        if (character === '.')
+        {
+          // Flicker the circle for a short period of time
+          circle.style.visibility = 'visible';
+          //audio.play();  
+          navigator.vibrate([100,30]);
+          await new Promise(resolve => setTimeout(resolve, 500));
+          circle.style.visibility = 'hidden';
+          //audio.pause();
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+        else if (character === '-')
+        {
+          // Flicker the circle for a longer period of time
+          circle.style.visibility = 'visible';
+          //audio.play();
+          navigator.vibrate([200,30]);
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          circle.style.visibility = 'hidden';
+          //audio.pause();
+          await new Promise(resolve => setTimeout(resolve, 500)); 
+        }
+        else
+        {
+         // setInterval(function() {
+         //   audio.stop();
+         // }, 500);
+          // If the character is not a dot or a dash, pause for a short period of time
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+      }
+      audio.stop();
+    }
+  </script>
+</body>
+</html>
+
