@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vibration/1.1.0/vibration.min.js"></script>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Somebody</title>
@@ -26,7 +27,7 @@
     }
     button[type="submit"] {
       width: 50%;
-      background-color: white;
+      background-color: #33ccff;
       color: black;
       padding: 14px 20px;
       margin: 8px 0;
@@ -35,7 +36,7 @@
       cursor: pointer;
     }
     button[type="submit"]:hover {
-      background-color: grey;
+      background-color: #0099cc;
     }
   .container {
     position: absolute;
@@ -65,12 +66,12 @@
 </head>
 <body>
   <form id="morse-form">
-    <label for="text-input">Enter text to convert to Morse code:</label><br>
-    <input type="text" id="text-input" name="text"><br>
-    <button type="submit" id="convert-button">Start</button>
+    <label id="label" for="text-input" style="display:None"><i>Enter lyrics:</i></label><br>
+    <input type="text" id="text-input" style="display:None" name="text"/><br>
+    <button type="submit" id="convert-button">Don't you want to dance?</button>
   </form>
   <div class="container">
-    <div class="circle"></div>
+    <div class="circle" style="display:None;"></div>
   </div>
   <script>
     const MORSE_CODE = {
@@ -113,35 +114,70 @@
       ' ': '/'
     };
     const morseForm = document.getElementById('morse-form');
+    const label = document.getElementById('label');
     const textInput = document.getElementById('text-input');
+    const button = document.getElementById('convert-button');
     const light = document.getElementById('light-object');
     const circle = document.querySelector('.circle');
     const flickerSpeedMs = 1000;
-    var audio = new Audio("beep.mp3");
+    //var audio = new Audio("beep.mp3");
 
-    textInput.value = "Oh I want to dance Say you want to dance Don't you want to dance";
+    //var initialSong = "Dont you wanna dance Say you wanna dance Dont you wanna dance Dont you wanna dance Say you wanna dance Dont you wanna dance Dont you wanna dance Say you wanna dance With somebody who loves me Dance";
+    var initialSong = "D";
 
+    // DEBUGGING
+    //alert("test");
+    //event.preventDefault();
+    //navigator.vibrate(1000);
+    //navigator.vibrate([500, 250, 500]);
+
+    // VIBRATIONS
+//        if (navigator.vibrate) {
+//          console.log("Performing Vibration test...");
+//          // Vibrate the device
+//          //navigator.vibrate(200); // vibrate for 200ms
+//          //navigator.vibrate([100,30,100,30,100,30,200,30,200,30,200,30,100,30,100,30,100]); // Vibrate 'SOS' in Morse.
+//        } else {
+//          // Vibration is not supported
+//          console.log("Vibration is not supported on this device.");
+//        }
+
+    
+    var stage = 1;
+    // STAGE1: INTIAL ANIMATION
+    function stage1()
+    {
+        button.style.display = "None";
+        circle.style.display = "block";
+        const text = initialSong;
+        const morseCode = convertToMorseCode(text);
+        console.log(morseCode);
+        playMorseCode(morseCode);
+    }
+    // STAGE2: POST ANIMATION
+    function stage2()
+    {
+        label.style.display = "block";
+        textInput.value = "";
+        textInput.style.display = "block";
+        button.style.display = "block";
+        circle.style.display = "None";
+    }
     morseForm.addEventListener('submit', (event) => {
-      //alert("test");
-      event.preventDefault();
-
-
-      if (navigator.vibrate) {
-        console.log("Performing Vibration test...");
-        // Vibrate the device
-        //navigator.vibrate(200); // vibrate for 200ms
-        //navigator.vibrate([100,30,100,30,100,30,200,30,200,30,200,30,100,30,100,30,100]); // Vibrate 'SOS' in Morse.
-      } else {
-        // Vibration is not supported
-        console.log("Vibration is not supported on this device.");
-      }
-
-
-      const text = textInput.value;
-      const morseCode = convertToMorseCode(text);
-      console.log(morseCode);
-      playMorseCode(morseCode);
+        if (stage == 1){
+            event.preventDefault();
+            stage1();
+            stage = 2;
+        }
+        else if (stage == 2){
+            event.preventDefault();
+            stage2();
+            stage = 1;
+        }
     });
+
+    //stage1();
+    //stage2();
 
     function convertToMorseCode(text) {
 
@@ -180,7 +216,7 @@
           circle.style.boxShadow = "0 0 40px 20px #facfe2";
           circle.style.visibility = 'visible';
           //audio.play();  
-          navigator.vibrate([100,30]);
+          //navigator.vibrate([100,30]);
           await new Promise(resolve => setTimeout(resolve, 500));
           circle.style.visibility = 'hidden';
           //audio.pause();
@@ -194,7 +230,7 @@
           circle.style.boxShadow = "0 0 40px 20px #58c1fc";
           circle.style.visibility = 'visible';
           //audio.play();
-          navigator.vibrate([200,30]);
+          //navigator.vibrate([200,30]);
           await new Promise(resolve => setTimeout(resolve, 1000));
           circle.style.visibility = 'hidden';
           //audio.pause();
@@ -209,7 +245,7 @@
           await new Promise(resolve => setTimeout(resolve, 1000));
         }
       }
-      audio.stop();
+      //audio.stop();
     }
   </script>
 </body>
