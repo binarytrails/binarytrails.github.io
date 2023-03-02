@@ -122,9 +122,6 @@
     const flickerSpeedMs = 1000;
     //var audio = new Audio("beep.mp3");
 
-    //var initialSong = "Dont you wanna dance Say you wanna dance Dont you wanna dance Dont you wanna dance Say you wanna dance Dont you wanna dance Dont you wanna dance Say you wanna dance With somebody who loves me Dance";
-    var initialSong = "a";
-
     // DEBUGGING
     //alert("test");
     //event.preventDefault();
@@ -143,17 +140,30 @@
       console.log("Vibration is not supported on this device.");
     }
 
+    var clicks = 0;
     morseForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-        button.style.display = "None";
-        circle.style.display = "block";
-        const text = initialSong;
-        const morseCode = convertToMorseCode(text);
-        console.log(morseCode);
-        playMorseCode(morseCode);
-        playMorseCode(morseCode).then(x => { 
-            window.location = "custom.html";
-        });;
+        if (clicks == 0)
+        {
+            clicks += 1;
+            event.preventDefault();
+            label.style.display = "block";
+            textInput.value = "";
+            textInput.style.display = "block";
+            button.style.display = "block";
+            circle.style.display = "None";
+        }
+        else if (clicks == 1)
+        {
+            event.preventDefault();
+            circle.style.display = "block";
+            const text = textInput.value.replace( /[^a-zA-Z ]/g, '').replace( /\s\s+/g, ' ');
+            console.log(text);
+            const morseCode = convertToMorseCode(text);
+            console.log(morseCode);
+            playMorseCode(morseCode).then(x => { 
+                location.reload();
+            });;
+        }
     });
 
     function convertToMorseCode(text) {
@@ -227,3 +237,4 @@
   </script>
 </body>
 </html>
+
