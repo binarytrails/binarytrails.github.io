@@ -154,9 +154,15 @@
         const morseCode = convertToMorseCode(text);
         console.log(morseCode);
         playMorseCode(morseCode);
-        playMorseCode(morseCode).then(x => { 
-            window.location = "custom.html";
-        });;
+        //playMorseCode(morseCode).then(x => { 
+        //    window.location = "custom.html";
+        //});;
+        setTimeout(() => {
+          //console.log("Delayed for 1 second.");
+          window.location = "custom.html";
+        }, "60000");
+        playMorseCode(morseCode)
+
     });
 
     function convertToMorseCode(text) {
